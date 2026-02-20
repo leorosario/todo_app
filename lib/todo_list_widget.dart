@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/service_locator.dart';
 import 'package:todo_app/todo.dart';
+import 'package:todo_app/todo_item_widget.dart';
+import 'package:todo_app/todo_list_controller.dart';
 
 List<Todo> todoList = [
   Todo.create('Task 1'),
@@ -10,19 +13,26 @@ List<Todo> todoList = [
 ];
 
 class TodoListWidget extends StatelessWidget {
-  const TodoListWidget({super.key});
+  TodoListWidget({super.key});
+
+  final controller = getIt<TodoListController>();
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      primary: false,
-      shrinkWrap: true,
-      itemCount: todoList.length,
-      itemBuilder: (context, index){
-        ListTile(
-          title: Text(todoList[index].task),
+    return ValueListenableBuilder(
+      valueListenable: controller.todoListNotifier, 
+      builder:(context, todoList, child){
+        return ListView.builder(
+          primary: false,
+          shrinkWrap: true,
+          itemCount: todoList.length,
+          itemBuilder: (context, index){
+            return ListTile(
+              title: TodoItemWidget(todo: todoList[index]),
+            );
+          },      
         );
-      },      
-    );
+      },);
+    
   }
 }
