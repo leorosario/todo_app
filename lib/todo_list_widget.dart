@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/service_locator.dart';
 import 'package:todo_app/todo.dart';
+import 'package:todo_app/todo_filter.dart';
 import 'package:todo_app/todo_item_widget.dart';
 import 'package:todo_app/todo_list_controller.dart';
 
@@ -22,14 +23,24 @@ class TodoListWidget extends StatelessWidget {
     return ValueListenableBuilder(
       valueListenable: controller.todoListNotifier, 
       builder:(context, todoList, child){
+        var isFilterAll = controller.filtterNotifie.value == TodoFilter.all;
+
+        if(todoList.isEmpty && !isFilterAll){
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text('vazio'),
+              ),
+          );
+        }
+
         return ListView.builder(
           primary: false,
           shrinkWrap: true,
           itemCount: todoList.length,
           itemBuilder: (context, index){
-            return ListTile(
-              title: TodoItemWidget(todo: todoList[index]),
-            );
+            final todo = todoList[index];
+            return TodoItemWidget(key: ValueKey(todo.id), todo: todo);
           },      
         );
       },);

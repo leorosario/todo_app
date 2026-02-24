@@ -54,6 +54,6 @@ class _TodoItemWidgetState extends State<TodoItemWidget> {
   }
 
   void onDeleted(){
-    print("Deleted");
+    controller.remove(widget.todo.id);
   }
 }
