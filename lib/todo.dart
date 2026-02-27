@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
 class Todo {
@@ -16,6 +17,12 @@ class Todo {
     return Todo(id: uuid, task: task, completed: false);
   }
 
+  factory Todo.fromJson(Map<String, dynamic> json) => Todo(
+      id: json['id'],
+      task: json['task'],
+      completed: json['completed']
+  );
+
   Todo copyWith({String? task, bool? completed}){
     return Todo(
       id: id,
@@ -23,4 +30,10 @@ class Todo {
       completed: completed ?? this.completed
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'task': task,
+    'completed': completed
+  };
 }

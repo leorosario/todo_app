@@ -34,13 +34,24 @@ class TodoListWidget extends StatelessWidget {
           );
         }
 
-        return ListView.builder(
+        return ReorderableListView.builder(
           primary: false,
           shrinkWrap: true,
           itemCount: todoList.length,
+          buildDefaultDragHandles: isFilterAll,
+          onReorder:  (oldIndex, newIndex) {
+            debugPrint('onReorder -> old=$oldIndex new=$newIndex');
+            controller.reorder(oldIndex, newIndex);
+          },
           itemBuilder: (context, index){
             final todo = todoList[index];
-            return TodoItemWidget(key: ValueKey(todo.id), todo: todo);
+            
+            return ReorderableDragStartListener(
+              key: ValueKey(todo.id),   // a key precisa estar AQUI
+              index: index,
+              child: TodoItemWidget(todo: todo),
+            );
+
           },      
         );
       },);
