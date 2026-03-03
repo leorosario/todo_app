@@ -12,6 +12,12 @@ class TodoListController {
     filtterNotifie.addListener(() => todoListNotifier.changeFilter(filtterNotifie.value));
   }
 
+  
+  void changeSearch(String query) {
+    todoListNotifier.changeSearch(query);
+  }
+
+
   void add(String task){
     todoListNotifier.add(Todo.create(task));
   }

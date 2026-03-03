@@ -9,6 +9,7 @@ class TodoListNotifier extends ValueNotifier<List<Todo>> {
 
   final _allTodosNotifier = ValueNotifier<List<Todo>>([]);
   TodoFilter _currentFilter = TodoFilter.all;
+  String _currentQuery = '';
   final _storageService = getIt<StorageService>();
 
   List<Todo> get _todos => _allTodosNotifier.value;
@@ -54,6 +55,13 @@ class TodoListNotifier extends ValueNotifier<List<Todo>> {
     _upateTodoList();
   }
 
+  
+  void changeSearch(String query) {
+    _currentQuery = query;
+    _upateTodoList();
+  }
+
+
   void _upateTodoList(){
     value = _mapFilterToTodoList();
   }
@@ -62,9 +70,30 @@ class TodoListNotifier extends ValueNotifier<List<Todo>> {
     _storageService.saveTodos(_todos.where((todo) => todo.task.isNotEmpty).toList());
   }
 
-  List<Todo> _mapFilterToTodoList() => switch(_currentFilter){
-    TodoFilter.incomplete => _todos.where((todo) => !todo.completed).toList(),
-    TodoFilter.completed => _todos.where((todo) => todo.completed).toList(),    
-    _ => _todos,
-  };
+  
+  List<Todo> _mapFilterToTodoList() {
+    Iterable<Todo> items = _todos;
+
+    // 1) Filtra por status
+    switch (_currentFilter) {
+      case TodoFilter.incomplete:
+        items = items.where((t) => !t.completed);
+        break;
+      case TodoFilter.completed:
+        items = items.where((t) => t.completed);
+        break;
+      case TodoFilter.all:
+        // nenhum filtro por status
+        break;
+    }
+
+    // 2) Filtra por texto
+    final q = _currentQuery.trim().toLowerCase();
+    if (q.isNotEmpty) {
+      items = items.where((t) => (t.task).toLowerCase().contains(q));
+    }
+
+    return items.toList(growable: false);
+  }
+
 }
